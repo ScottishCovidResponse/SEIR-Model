@@ -35,7 +35,7 @@ public class App {
         OdeProperties props = reader.getOdeProperties();
         SeirRecord population = reader.getInitialPopulation();
 
-        LOGGER.info(t0 + "   " + population.getS() + "   " + population.getE() + "   " + population.getI() + "   " + population.getR());
+        LOGGER.info("{}   {}   {}   {}   {}", t0, population.getS(), population.getE(), population.getI(), population.getR());
 
         calculate(tMax, props, population);
 
@@ -61,7 +61,7 @@ public class App {
             double i = pop.getI() + diDt;
             double r = pop.getR() + drDt;
 
-            LOGGER.info((t + 1) + "   " + s + "   " + e + "   " + i + "   " + r + "   " + n);
+            LOGGER.info("{}   {}   {}   {}   {}   {}", t + 1, s, e, i, r, n);
 
             pop = new SeirRecord(t, n, s, e, i, r);
 

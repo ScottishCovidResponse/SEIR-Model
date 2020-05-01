@@ -2,6 +2,7 @@ package uk.ramp.seir.ode;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import uk.ramp.seir.exception.SeirException;
 
 public class OdeBuilder {
     private static final Logger LOGGER = LogManager.getLogger(OdeBuilder.class);
@@ -51,16 +52,19 @@ public class OdeBuilder {
     public OdeProperties build() {
 
         if (gamma == 0d) {
-            LOGGER.error("Nope!!");
-            throw new RuntimeException();
+            String message = "The value for gamma cannot be zero.";
+            LOGGER.error(message);
+            throw new SeirException(message);
         }
         if (sigma == 0d) {
-            LOGGER.error("Nope!!");
-            throw new RuntimeException();
+            String message = "The value for sigma cannot be zero.";
+            LOGGER.error(message);
+            throw new SeirException(message);
         }
         if (beta == 0d) {
-            LOGGER.error("Nope!!");
-            throw new RuntimeException();
+            String message = "The value for beta cannot be zero.";
+            LOGGER.error(message);
+            throw new SeirException(message);
         }
 
 

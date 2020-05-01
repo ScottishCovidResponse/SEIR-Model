@@ -2,6 +2,7 @@ package uk.ramp.seir.population;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import uk.ramp.seir.exception.SeirException;
 
 public class PopulationBuilder {
     private static final Logger LOGGER = LogManager.getLogger(PopulationBuilder.class);
@@ -41,23 +42,27 @@ public class PopulationBuilder {
     public SeirRecord build() {
 
         if (time == -1) {
-            LOGGER.error("Nope!!");
-            throw new RuntimeException();
+            String message = "The initial time value must be 0 or greater.";
+            LOGGER.error(message);
+            throw new SeirException(message);
         }
 
         if (population == 0) {
-            LOGGER.error("Nope!!");
-            throw new RuntimeException();
+            String message = "The population cannot be zero.";
+            LOGGER.error(message);
+            throw new SeirException(message);
         }
 
-        if (susceptible + exposed + infected + recovered > population) {
-            LOGGER.error("Nope!!");
-            throw new RuntimeException();
+        if (susceptible + exposed + infected + recovered != population) {
+            String message = "The sum of SEIR values must equal the population.";
+            LOGGER.error(message);
+            throw new SeirException(message);
         }
 
         if (exposed + infected == 0d) {
-            LOGGER.error("Nope!!");
-            throw new RuntimeException();
+            String message = "The sum of exposed and infected cannot equal zero for start conditions.";
+            LOGGER.error(message);
+            throw new SeirException(message);
         }
 
         susceptible = population - exposed - infected - recovered;

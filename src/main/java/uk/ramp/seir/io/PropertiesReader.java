@@ -2,6 +2,8 @@ package uk.ramp.seir.io;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import uk.ramp.seir.ode.OdeBuilder;
 import uk.ramp.seir.ode.OdeProperties;
 import uk.ramp.seir.population.PopulationBuilder;
@@ -10,7 +12,7 @@ import uk.ramp.seir.population.SeirRecord;
 import java.io.*;
 
 public class PropertiesReader {
-
+    private static final Logger LOGGER = LogManager.getLogger(PropertiesReader.class);
     private final File ode;
     private final File prop;
 
@@ -29,11 +31,11 @@ public class PropertiesReader {
         read();
     }
 
-    public static void createDefaultOde() throws IOException {
+    public void createDefaultOde() throws IOException {
 
         OdeProperties wrapper = new OdeProperties(0.2, 0.5, 0.9, 0, 0);
 
-        try (Writer w = new FileWriter("odeProperties.json")) {
+        try (Writer w = new FileWriter(ode)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(wrapper, w);
         }
@@ -41,12 +43,25 @@ public class PropertiesReader {
 
     private void read() {
 
-        // TODO: check files exist
+        try {
+            if (!ode.exists()) {
+                LOGGER.error("The ODE file is not present at {}, creating a default", ode);
+                createDefaultOde();
+            }
+
+            if (!prop.exists()) {
+                LOGGER.error("The Properties file is not present at {}, creating a default", prop);
+                createDefaultProperties();
+            }
+        } catch (IOException e) {
+            LOGGER.error(e);
+        }
+
         try {
             odeProperties = readOde(ode);
             properties = readProperties(prop);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e);
         }
     }
 
@@ -54,7 +69,7 @@ public class PropertiesReader {
 
         Properties wrapper = new Properties(100, 99, 1, 0, 0, 0, 10);
 
-        try (Writer w = new FileWriter("properties.json")) {
+        try (Writer w = new FileWriter(prop)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
             gson.toJson(wrapper, w);
         }
