@@ -53,7 +53,7 @@ public class PopulationBuilder {
             throw new SeirException(message);
         }
 
-        if (susceptible + exposed + infected + recovered != population) {
+        if (susceptible + exposed + infected + recovered > population) {
             String message = "The sum of SEIR values must equal the population.";
             LOGGER.error(message);
             throw new SeirException(message);
