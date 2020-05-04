@@ -15,15 +15,6 @@ public class OdeBuilder {
     public OdeBuilder() {
     }
 
-    public OdeBuilder(double mu, double nu, double gamma, double sigma, double beta) {
-        this.mu = mu;
-        this.nu = nu;
-        this.gamma = gamma;
-        this.sigma = sigma;
-        this.beta = beta;
-    }
-
-
     public OdeBuilder setMu(double mu) {
         this.mu = mu;
         return this;
@@ -66,7 +57,6 @@ public class OdeBuilder {
             LOGGER.error(message);
             throw new SeirException(message);
         }
-
 
         return new OdeProperties(gamma, sigma, beta, mu, nu);
     }
