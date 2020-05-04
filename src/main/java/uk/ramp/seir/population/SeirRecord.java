@@ -1,6 +1,8 @@
 package uk.ramp.seir.population;
 
 
+import java.util.Objects;
+
 public class SeirRecord {
 
     private final int time;
@@ -48,13 +50,24 @@ public class SeirRecord {
 
     @Override
     public String toString() {
-        return "SeirRecord{" +
-                "time=" + time +
-                ", n=" + n +
-                ", s=" + s +
-                ", e=" + e +
-                ", i=" + i +
-                ", r=" + r +
-                '}';
+        return String.format("SeirRecord{ time=%d, n=%.8f, s=%.8f, e=%.8f, i=%.8f, r=%.8f}", time, n, s, e, i, r);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        SeirRecord that = (SeirRecord) o;
+        return time == that.time &&
+                Double.compare(that.n, n) == 0 &&
+                Double.compare(that.s, s) == 0 &&
+                Double.compare(that.e, e) == 0 &&
+                Double.compare(that.i, i) == 0 &&
+                Double.compare(that.r, r) == 0;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(time, n, s, e, i, r);
     }
 }

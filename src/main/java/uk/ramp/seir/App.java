@@ -39,7 +39,7 @@ public class App {
 
         calculate(tMax, props, population);
 
-        Output.printSeirCSV(records);
+        Output.printSeirCSV(records, "SEIR.csv");
 
 
     }

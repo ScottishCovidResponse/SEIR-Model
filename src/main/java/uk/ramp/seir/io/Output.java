@@ -17,10 +17,10 @@ public class Output {
         //hidden constructor
     }
 
-    public static void printSeirCSV(Map<Integer, SeirRecord> records) {
+    public static void printSeirCSV(Map<Integer, SeirRecord> records, String fileName) {
 
         try {
-            FileWriter out = new FileWriter("SEIR.csv");
+            FileWriter out = new FileWriter(fileName);
             String[] headers = {"Day", "S", "E", "I", "R"};
             try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT.withHeader(headers))) {
                 records.forEach((day, record) -> {

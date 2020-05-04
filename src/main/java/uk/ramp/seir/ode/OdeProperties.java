@@ -39,12 +39,8 @@ public class OdeProperties {
 
     @Override
     public String toString() {
-        return "OdeProperties{" +
-                "gamma=" + gamma +
-                ", sigma=" + sigma +
-                ", beta=" + beta +
-                ", nu=" + nu +
-                ", mu=" + mu +
-                '}';
+
+        return String.format("OdeProperties{gamma=%.8f, sigma=%.8f, beta=%.8f, nu=%.8f, mu=%.8f}", gamma, sigma, beta, nu, mu);
+
     }
 }
