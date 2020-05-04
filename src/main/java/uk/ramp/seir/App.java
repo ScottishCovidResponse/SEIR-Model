@@ -13,6 +13,8 @@ import uk.ramp.seir.population.SeirRecord;
 import java.util.HashMap;
 import java.util.Map;
 
+import static uk.ramp.seir.ode.OdeEquations.*;
+
 
 public class App {
     private static final Logger LOGGER = LogManager.getLogger(App.class);
@@ -25,7 +27,7 @@ public class App {
 
     }
 
-    private void run() {
+    void run() {
 
         PropertiesReader reader = new PropertiesReader("odeProperties.json", "properties.json");
 
@@ -44,7 +46,7 @@ public class App {
 
     }
 
-    private void calculate(int tMax, OdeProperties props, SeirRecord pop) {
+    void calculate(int tMax, OdeProperties props, SeirRecord pop) {
 
         for (int t = 0; t < tMax; t++) {
 
@@ -66,59 +68,6 @@ public class App {
             pop = new SeirRecord(t, n, s, e, i, r);
 
         }
-    }
-
-
-    private double calculateDsDt(OdeProperties props, SeirRecord population) {
-
-        final double n = population.getN();
-        final double s = population.getS();
-        final double i = population.getI();
-
-        final double a = props.getMu() * (n - s);
-        final double b = props.getBeta() * (s * i / n);
-        final double c = props.getNu() * (s);
-
-        return a - b - c;
-    }
-
-
-    private double calculateDeDt(OdeProperties props, SeirRecord population) {
-        final double n = population.getN();
-        final double s = population.getS();
-        final double e = population.getE();
-        final double i = population.getI();
-
-        final double a = props.getBeta() * (s * i / n);
-        final double b = (props.getMu() + props.getSigma()) * e;
-
-        return a - b;
-    }
-
-
-    private double calculateDiDt(OdeProperties props, SeirRecord population) {
-        final double e = population.getE();
-        final double i = population.getI();
-
-        final double a = props.getSigma() * e;
-        final double b = (props.getMu() + props.getGamma()) * i;
-
-        return a - b;
-    }
-
-    private double calculateDrDt(OdeProperties props, SeirRecord population) {
-
-
-        final double s = population.getS();
-        final double i = population.getI();
-        final double r = population.getR();
-
-        final double a = props.getGamma() * i;
-        final double b = props.getMu() * r;
-        final double c = props.getNu() * s;
-
-        return a - b + c;
-
     }
 
 
