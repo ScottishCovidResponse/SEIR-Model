@@ -33,7 +33,7 @@ public class PropertiesReader {
 
     public void createDefaultOde() throws IOException {
 
-        OdeProperties wrapper = new OdeProperties(0.2, 0.5, 0.9, 0, 0);
+        OdeProperties wrapper = new OdeProperties(0.1, 0.2, 0.3, 0.4, 0.5);
 
         try (Writer w = new FileWriter(ode)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -58,8 +58,8 @@ public class PropertiesReader {
         }
 
         try {
-            odeProperties = readOde(ode);
-            properties = readProperties(prop);
+            odeProperties = readOde();
+            properties = readProperties();
         } catch (IOException e) {
             LOGGER.error(e);
         }
@@ -75,16 +75,16 @@ public class PropertiesReader {
         }
     }
 
-    public OdeProperties readOde(File file) throws IOException {
+    public OdeProperties readOde() throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (Reader fileReader = new FileReader(file)) {
+        try (Reader fileReader = new FileReader(ode)) {
             return gson.fromJson(fileReader, OdeProperties.class);
         }
     }
 
-    public Properties readProperties(File file) throws IOException {
+    public Properties readProperties() throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        try (Reader fileReader = new FileReader(file)) {
+        try (Reader fileReader = new FileReader(prop)) {
             return gson.fromJson(fileReader, Properties.class);
         }
     }
@@ -106,5 +106,9 @@ public class PropertiesReader {
     public int gettMax() {
         return properties.gettMax();
 
+    }
+
+    public Properties getProperties() {
+        return properties;
     }
 }

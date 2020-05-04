@@ -19,7 +19,7 @@ public class OdePropertiesTest {
 
         OdeProperties var = new OdeBuilder().setGamma(gamma).setSigma(sigma).setBeta(beta).setMu(mu).setNu(nu).build();
 
-        String exp = String.format("OdeProperties{gamma=%.8f, sigma=%.8f, beta=%.8f, nu=%.8f, mu=%.8f}", gamma, sigma, beta, nu, mu);
+        String exp = String.format("OdeProperties{gamma=%.8f, sigma=%.8f, beta=%.8f, mu=%.8f, nu=%.8f}", gamma, sigma, beta, mu, nu);
         Assert.assertEquals(exp, var.toString());
 
     }

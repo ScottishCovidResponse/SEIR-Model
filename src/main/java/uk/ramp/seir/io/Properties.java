@@ -2,6 +2,8 @@ package uk.ramp.seir.io;
 
 import uk.ramp.seir.population.SeirRecord;
 
+import java.util.Objects;
+
 public class Properties extends SeirRecord {
 
     private final int t0;
@@ -27,8 +29,24 @@ public class Properties extends SeirRecord {
     @Override
     public String toString() {
         return "Properties{" +
-                "t0=" + t0 +
+                "super=" + super.toString() +
+                ",t0=" + t0 +
                 ", tMax=" + tMax +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Properties that = (Properties) o;
+        return t0 == that.t0 &&
+                tMax == that.tMax;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), t0, tMax);
     }
 }

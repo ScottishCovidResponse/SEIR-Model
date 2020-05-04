@@ -1,5 +1,7 @@
 package uk.ramp.seir.ode;
 
+import java.util.Objects;
+
 public class OdeProperties {
 
     private final double gamma;
@@ -39,8 +41,23 @@ public class OdeProperties {
 
     @Override
     public String toString() {
+        return String.format("OdeProperties{gamma=%.8f, sigma=%.8f, beta=%.8f, mu=%.8f, nu=%.8f}", gamma, sigma, beta, mu, nu);
+    }
 
-        return String.format("OdeProperties{gamma=%.8f, sigma=%.8f, beta=%.8f, nu=%.8f, mu=%.8f}", gamma, sigma, beta, nu, mu);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        OdeProperties that = (OdeProperties) o;
+        return Double.compare(that.gamma, gamma) == 0 &&
+                Double.compare(that.sigma, sigma) == 0 &&
+                Double.compare(that.beta, beta) == 0 &&
+                Double.compare(that.nu, nu) == 0 &&
+                Double.compare(that.mu, mu) == 0;
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(gamma, sigma, beta, nu, mu);
     }
 }

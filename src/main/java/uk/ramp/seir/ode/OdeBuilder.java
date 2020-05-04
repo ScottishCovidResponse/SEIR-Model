@@ -12,8 +12,6 @@ public class OdeBuilder {
     private double sigma;
     private double beta;
 
-    public OdeBuilder() {
-    }
 
     public OdeBuilder setMu(double mu) {
         this.mu = mu;
