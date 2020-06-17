@@ -85,8 +85,8 @@ public class PopulationBuilderTest {
             double recovered = r.nextInt(n);
             double population = exposed + infected + recovered + expectedSusceptible;
 
-            SeirRecord s = new PopulationBuilder().setTime(0).setPopulation(population).setInfected(infected).setRecovered(recovered).setExposed(exposed).build();
-            Assert.assertEquals(expectedSusceptible, s.getS(), 1e-6);
+            CompartmentRecord s = new PopulationBuilder().setTime(0).setPopulation(population).setInfected(infected).setRecovered(recovered).setExposed(exposed).build();
+            Assert.assertEquals(expectedSusceptible, s.s(), 1e-6);
 
         }
 

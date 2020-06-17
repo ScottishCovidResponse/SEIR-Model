@@ -2,14 +2,18 @@ package uk.ramp.seir.io;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.TypeAdapterFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ramp.seir.ode.OdeBuilder;
+import uk.ramp.seir.ode.ImmutableOdeProperties;
 import uk.ramp.seir.ode.OdeProperties;
+import uk.ramp.seir.population.CompartmentRecord;
+import uk.ramp.seir.population.ImmutableCompartmentRecord;
 import uk.ramp.seir.population.PopulationBuilder;
-import uk.ramp.seir.population.SeirRecord;
 
 import java.io.*;
+import java.util.ServiceLoader;
+
 
 public class PropertiesReader {
     private static final Logger LOGGER = LogManager.getLogger(PropertiesReader.class);
@@ -33,7 +37,7 @@ public class PropertiesReader {
 
     public void createDefaultOde() throws IOException {
 
-        OdeProperties wrapper = new OdeProperties(0.1, 0.2, 0.3, 0.4, 0.5);
+        OdeProperties wrapper = ImmutableOdeProperties.builder().alpha(0.1).beta(0.1).gamma1(0.1).gamma2(0.1).gamma3(0.1).mu(0.1).sigma1(0.1).sigma2(0.1).build();
 
         try (Writer w = new FileWriter(ode)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -67,7 +71,12 @@ public class PropertiesReader {
 
     public void createDefaultProperties() throws IOException {
 
-        Properties wrapper = new Properties(100, 99, 1, 0, 0, 0, 10);
+        CompartmentRecord record = ImmutableCompartmentRecord.builder().
+                n(100).s(99).e(1).build();
+
+
+        Properties wrapper = ImmutableProperties.builder().compartmentRecord(record).t0(0).tMax(10).build();
+//        Properties wrapper = new Properties(100, 99, 1, 0, 0, 0, 10);
 
         try (Writer w = new FileWriter(prop)) {
             Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -78,33 +87,35 @@ public class PropertiesReader {
     public OdeProperties readOde() throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         try (Reader fileReader = new FileReader(ode)) {
-            return gson.fromJson(fileReader, OdeProperties.class);
+            return gson.fromJson(fileReader, ImmutableOdeProperties.class);
         }
     }
 
     public Properties readProperties() throws IOException {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        ServiceLoader.load(TypeAdapterFactory.class).forEach(gsonBuilder::registerTypeAdapterFactory);
         try (Reader fileReader = new FileReader(prop)) {
-            return gson.fromJson(fileReader, Properties.class);
+            return gsonBuilder.setPrettyPrinting().create().fromJson(fileReader, Properties.class);
         }
     }
 
 
     public OdeProperties getOdeProperties() {
-        return new OdeBuilder().setBeta(odeProperties.getBeta()).setGamma(odeProperties.getGamma()).setSigma(odeProperties.getSigma()).setMu(odeProperties.getMu()).setNu(odeProperties.getNu()).build();
+        return ImmutableOdeProperties.builder().from(odeProperties).build();
     }
 
-    public SeirRecord getInitialPopulation() {
-        return new PopulationBuilder().setTime(properties.getT0()).setPopulation(properties.getN()).setExposed(properties.getE()).setInfected(properties.getI()).setRecovered(properties.getR()).build();
+    public CompartmentRecord getInitialPopulation() {
+
+        return new PopulationBuilder().setTime(properties.t0()).setPopulation(properties.compartmentRecord().n()).setExposed(properties.compartmentRecord().e()).setInfected(properties.compartmentRecord().a()).setRecovered(properties.compartmentRecord().r()).build();
     }
 
     public int getT0() {
-        return properties.getT0();
+        return properties.t0();
 
     }
 
     public int gettMax() {
-        return properties.gettMax();
+        return properties.tMax();
 
     }
 

@@ -5,29 +5,32 @@ package uk.ramp.seir;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import uk.ramp.seir.io.Output;
+import uk.ramp.seir.io.CompartmentWriter;
 import uk.ramp.seir.io.PropertiesReader;
 import uk.ramp.seir.ode.OdeProperties;
-import uk.ramp.seir.population.SeirRecord;
+import uk.ramp.seir.population.CompartmentRecord;
+import uk.ramp.seir.population.ImmutableCompartmentRecord;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.util.*;
 
 import static uk.ramp.seir.ode.OdeEquations.*;
 
 
 public class App {
     private static final Logger LOGGER = LogManager.getLogger(App.class);
-    Map<Integer, SeirRecord> records = new HashMap<>();
+    Map<Integer, CompartmentRecord> records = new HashMap<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
 
         App app = new App();
         app.run();
 
     }
 
-    void run() {
+    void run() throws IOException {
 
         PropertiesReader reader = new PropertiesReader("odeProperties.json", "properties.json");
 
@@ -35,37 +38,49 @@ public class App {
         int tMax = reader.gettMax();
 
         OdeProperties props = reader.getOdeProperties();
-        SeirRecord population = reader.getInitialPopulation();
+        CompartmentRecord population = reader.getInitialPopulation();
 
-        LOGGER.info("{}   {}   {}   {}   {}", t0, population.getS(), population.getE(), population.getI(), population.getR());
+        LOGGER.info("{}   {}   {}   {}   {}", t0, population.s(), population.e(), population.a(), population.r());
 
         calculate(tMax, props, population);
 
-        Output.printSeirCSV(records, "SEIR.csv");
+        Writer writer = new FileWriter("Compartments.csv");
 
+        List<CompartmentRecord> list = new ArrayList<>(records.values());
+        list.sort(Comparator.comparingInt(CompartmentRecord::time));
+        new CompartmentWriter().write(writer, list);
 
     }
 
-    void calculate(int tMax, OdeProperties props, SeirRecord pop) {
+    void calculate(int tMax, OdeProperties props, CompartmentRecord pop) {
 
         for (int t = 0; t < tMax; t++) {
 
             records.put(t, pop);
 
-            double dsDt = calculateDsDt(props, pop);
-            double deDt = calculateDeDt(props, pop);
-            double diDt = calculateDiDt(props, pop);
-            double drDt = calculateDrDt(props, pop);
+            double dsDt = dSdT(props, pop);
+            double deDt = dEdT(props, pop);
+            double diDt = dIdT(props, pop);
+            double dpDt = dpDt(props, pop);
+            double dSymDt = dSymDt(props, pop);
+            double dSymSevDt = dSymSevDt(props, pop);
+            double dDDt = dDDt(props, pop);
+            double drDt = dRdt(props, pop);
 
-            double n = pop.getN();
-            double s = pop.getS() + dsDt;
-            double e = pop.getE() + deDt;
-            double i = pop.getI() + diDt;
-            double r = pop.getR() + drDt;
 
-            LOGGER.info("{}   {}   {}   {}   {}   {}", t + 1, s, e, i, r, n);
+            double n = pop.n();
+            double s = pop.s() + dsDt;
+            double e = pop.e() + deDt;
+            double i = pop.a() + diDt;
+            double p = pop.p() + dpDt;
+            double sym = pop.sym() + dSymDt;
+            double ss = pop.sev() + dSymSevDt;
+            double d = pop.d() + dDDt;
+            double r = pop.r() + drDt;
 
-            pop = new SeirRecord(t, n, s, e, i, r);
+            LOGGER.info("{}   {}   {}   {}   {}   {}   {}   {}   {}   {}", t + 1, s, e, i, r, p, sym, ss, d, n);
+
+            pop = ImmutableCompartmentRecord.builder().time(t + 1).n(n).s(s).e(e).a(i).p(p).sym(sym).sev(ss).d(d).r(r).build();
 
         }
     }

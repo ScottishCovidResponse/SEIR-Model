@@ -1,6 +1,6 @@
 package uk.ramp.seir.ode;
 
-import uk.ramp.seir.population.SeirRecord;
+import uk.ramp.seir.population.CompartmentRecord;
 
 public class OdeEquations {
 
@@ -8,56 +8,36 @@ public class OdeEquations {
         // hidden constructor
     }
 
-    public static double calculateDsDt(OdeProperties props, SeirRecord population) {
-
-        final double n = population.getN();
-        final double s = population.getS();
-        final double i = population.getI();
-
-        final double a = props.getMu() * (n - s);
-        final double b = props.getBeta() * (s * i / n);
-        final double c = props.getNu() * (s);
-
-        return a - b - c;
+    public static double dSdT(OdeProperties props, CompartmentRecord pop) {
+        return -props.beta() * pop.s() / pop.n() * (pop.a() + pop.p() + pop.sym() + pop.sev());
     }
 
-
-    public static double calculateDeDt(OdeProperties props, SeirRecord population) {
-        final double n = population.getN();
-        final double s = population.getS();
-        final double e = population.getE();
-        final double i = population.getI();
-
-        final double a = props.getBeta() * (s * i / n);
-        final double b = (props.getMu() + props.getSigma()) * e;
-
-        return a - b;
+    public static double dEdT(OdeProperties props, CompartmentRecord pop) {
+        return props.beta() * pop.s() / pop.n() * (pop.a() + pop.p() + pop.sym() + pop.sev()) - props.sigma1() * pop.e() - props.sigma2() * pop.e();
     }
 
-
-    public static double calculateDiDt(OdeProperties props, SeirRecord population) {
-        final double e = population.getE();
-        final double i = population.getI();
-
-        final double a = props.getSigma() * e;
-        final double b = (props.getMu() + props.getGamma()) * i;
-
-        return a - b;
+    public static double dIdT(OdeProperties props, CompartmentRecord pop) {
+        return props.sigma1() * pop.e() - props.gamma1() * pop.a();
     }
 
-    public static double calculateDrDt(OdeProperties props, SeirRecord population) {
-
-
-        final double s = population.getS();
-        final double i = population.getI();
-        final double r = population.getR();
-
-        final double a = props.getGamma() * i;
-        final double b = props.getMu() * r;
-        final double c = props.getNu() * s;
-
-        return a - b + c;
-
-
+    public static double dpDt(OdeProperties props, CompartmentRecord pop) {
+        return props.sigma2() * pop.e() - props.alpha() * pop.p();
     }
+
+    public static double dSymDt(OdeProperties props, CompartmentRecord pop) {
+        return props.alpha() * pop.p() - props.gamma2() * pop.sym() - props.sigma3() * pop.sym();
+    }
+
+    public static double dSymSevDt(OdeProperties props, CompartmentRecord pop) {
+        return props.sigma3() * pop.sym() - props.gamma3() * pop.sev() - props.mu() * pop.sev();
+    }
+
+    public static double dDDt(OdeProperties props, CompartmentRecord pop) {
+        return props.mu() * pop.sev();
+    }
+
+    public static double dRdt(OdeProperties props, CompartmentRecord pop) {
+        return props.gamma1() * pop.a() + props.gamma2() * pop.sym() + props.gamma3() * pop.sev();
+    }
+
 }

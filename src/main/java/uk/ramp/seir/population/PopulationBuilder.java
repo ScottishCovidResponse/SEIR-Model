@@ -39,7 +39,7 @@ public class PopulationBuilder {
         return this;
     }
 
-    public SeirRecord build() {
+    public CompartmentRecord build() {
 
         if (time == -1) {
             String message = "The initial time value must be 0 or greater.";
@@ -67,7 +67,7 @@ public class PopulationBuilder {
 
         susceptible = population - exposed - infected - recovered;
 
-        return new SeirRecord(0, population, susceptible, exposed, infected, recovered);
+        return ImmutableCompartmentRecord.builder().time(0).n(population).s(susceptible).e(exposed).build();
     }
 
 }

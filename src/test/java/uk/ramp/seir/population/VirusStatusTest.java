@@ -10,9 +10,9 @@ public class VirusStatusTest {
 
     @Test
     public void ranking() {
-        Assert.assertTrue(INFECTED.getVal() > SUSCEPTIBLE.getVal());
-        Assert.assertTrue(INFECTED.getVal() > EXPOSED.getVal());
-        Assert.assertTrue(INFECTED.getVal() > RECOVERED.getVal());
+        Assert.assertTrue(ASYMPTOMATIC.getVal() > SUSCEPTIBLE.getVal());
+        Assert.assertTrue(ASYMPTOMATIC.getVal() > EXPOSED.getVal());
+        Assert.assertTrue(ASYMPTOMATIC.getVal() > RECOVERED.getVal());
 
         Assert.assertTrue(EXPOSED.getVal() > SUSCEPTIBLE.getVal());
         Assert.assertTrue(EXPOSED.getVal() > RECOVERED.getVal());
